@@ -1,8 +1,11 @@
 import Sidebar from "./Sidebar"
 import { FaLessThan } from "react-icons/fa";
 import { Fragment, useState } from "react";
-import { CiCirclePlus } from "react-icons/ci";
-import { RiDeleteBin2Fill } from "react-icons/ri";
+
+import CustomizeNpxLite from "./CustomizeNpxLite";
+import ConfigureNpxLite from "./ConfigureNpxLite";
+
+
 export default function NpsLiteScale(){
 const[goBack,setGoBack]=useState(false)
 const[step,setStep]=useState(1)
@@ -10,7 +13,6 @@ const[numErr,setNumErr]=useState(false)
 const[nameErr,setNameErr]=useState(false)
 const[channelErr,setChannelErr]=useState(-1)
 const[instanceErr,setInstanceErr]=useState({index:-1,idx:-1})
-const[channelCount,setChannelCount]=useState(1)
 const[requiredChannel,setRequiredChannel]=useState(-1)
 const[requiredInstance,setRequiredInstance]=useState({index:-1,idx:-1})
 const[formData,setFormData]=useState({
@@ -21,7 +23,28 @@ const[formData,setFormData]=useState({
         channelName:"",
         instances:[""]
     }
-    ]
+    ],
+    orientation: "",
+    // user: "yes",  //should be boolean
+    // question: "",
+    // username: "Ndoneambrose",
+   // scalecolor: "#E5E7E8",
+    // numberrating: 10,
+    // no_of_scales: 3,
+    fontColor: "#E5E7E8",
+    fontStyle: "",
+    fontFormat:"",
+    fontSize:16,
+     timer: 0,
+    // template_name: "testing5350",
+    // name: "",
+    // text: "good+neutral+best",
+    leftText: "",
+    rightText: "",
+    centerText: "",
+    leftColor: "",
+    rightColor: "",
+    centerColor: "",
 })
     function handleBack(){
         setGoBack(true)
@@ -61,6 +84,7 @@ function handleFormData(value, name, index = 0, idx = 0) {
             break;
 
         case "channelName":
+            setRequiredChannel(-1)
             const nameExists = formData.channels.some((channel, idx) => idx !== index && channel.channelName === value);
             if (nameExists) {
                 setChannelErr(index)
@@ -75,6 +99,7 @@ function handleFormData(value, name, index = 0, idx = 0) {
             break;
 
         case "InstanceName":
+            setRequiredInstance({index:-1,idx:-1})
             const instanceExists = formData.channels[index].instances.includes(value)
               
             
@@ -83,7 +108,7 @@ function handleFormData(value, name, index = 0, idx = 0) {
             } else {
                 setInstanceErr({index:-1,idx:-1});
             }
-            console.log(idx)
+  
             setFormData(prev => ({
                 ...prev,
                 channels: prev.channels.map((channel, i) => i === index ? {
@@ -153,26 +178,45 @@ function deleteChannel(index){
 }
 
 function handleNext(){
-if(formData.scaleName.length<3){
-    setNameErr(true)
+        //     let error=false
+        // if(formData.scaleName.length<3){
+        //     setNameErr(true)
+        //     error=true
+        // }
+
+        // if(formData.numResponses<25 || formData.numResponses>10000){
+        //     setNumErr(true)
+        //     error=true
+            
+        // }
+
+        // formData.channels.map((channel, index) => {
+        
+        //     if (channel.channelName.length === 0) {
+        //         setRequiredChannel(index);
+        //         error=true
+        //     }
+        // });
+
+
+        // formData.channels.map((channel, index) => {
+        //     channel.instances.map((instance, idx) => {
+        //         if (instance.length === 0) {
+        //             setRequiredInstance({index, idx});
+        //             error=true
+        //         }
+        //     });
+        // });
+
+
+
+        // if(error)
+        //     return
+        // else
+setStep((prev)=>prev+1)
+
 }
-if(formData.numResponses<25 || formData.numResponses>10000){
-    setNumErr(true)
-}
- formData.channels.map((channel,index)=>{
-    if(channel.channelName.length==0 ){
-        setRequiredChannel(index)
-    }
- })
- formData.channels.map((channel,index)=>{
-    channel.instances.map((instance,idx)=>{
-        if(instance.length==0){
-            setRequiredInstance({index,idx})
-        }
-    })
- })
-}
-console.log(instanceErr)
+
     const GoBackPopUp=({onCancel,onConfirm})=>{
         return(
            <div className="fixed top-1/3 left-[700px] w-[400px] h-max p-5 bg-white rounded-lg">
@@ -186,7 +230,7 @@ console.log(instanceErr)
         )
     }
     return(
-          <div className="flex">
+          <div className="flex flex-wrap overflow-hidden">
           <Sidebar/>
           <div className="h-full w-[80%] pl-5 relative overflow-auto left-72">
             <span className="  p-5 flex justify-start items-center gap-3">
@@ -221,72 +265,18 @@ console.log(instanceErr)
                     </div>
                    
                 </div>
-            <div className="flex flex-col justify-center items-center gap-5">
-            <div className="flex flex-col justify-start items-center gap-3 mt-10 w-full">
-                <label className="p-2 font-medium" htmlFor="scaleName">Scale Name:</label>
-                <input 
-                    type="text" 
-                    value={formData["scaleName"]} 
-                    name="scaleName" 
-                    placeholder="Enter scale name" 
-                    onChange={e => handleFormData(e.target.value, e.target.name)} 
-                    className="p-2 rounded-md px-4"
-                />
-                 {nameErr && <p className="text-xs text-red-600 items-end">**min 3 characters</p>}
-            </div>
-
-            <div className="flex flex-col justify-center items-center gap-5">
-                <label className="p-2 font-medium" htmlFor="numResponses">No. of Responses per Instance:</label>
-                <input type="number" value={formData["numResponses"]} name="numResponses" placeholder="Enter number" 
-                 className="p-2 rounded-md px-4"
-                 onChange={e => handleFormData(e.target.value,e.target.name)} />
-                 {numErr && <p className="text-xs text-red-600 items-end">**(min:25- max:10000)</p>}
-            </div>
-            {formData.channels.map((channel,index1)=>(
-                <div key={index1} className="flex justify-center items-center gap-5">
-                 <div className="flex flex-col justify-start items-center gap-5">
-                <label className="p-2 font-medium" htmlFor="channelName">Specify Channel:</label>
-                <input type="text" value={channel.channelName}  name="channelName" placeholder="Enter channel name" 
-                 className="p-2 rounded-md px-4"
-                onChange={e => handleFormData(e.target.value,e.target.name,index1)} />
-               {channelErr==index1 && <p className="text-xs text-red-600 items-end">**channel name already exists</p>}
-               {requiredChannel==index1 && <p className="text-xs text-red-600 items-end">**required</p>}
-            </div>
-            <div className="flex flex-col justify-center items-center gap-5">
-                <label className="p-2 font-medium" htmlFor="InstanceName">Specify Instances:</label>
-                {channel.instances.map((instance, index) => (
-                    <>
-                <input
-                    key={index}
-                    type="text"
-                    value={instance}
-                    name="InstanceName"
-                    placeholder={`Enter instance ${index+1} name`}
-                    onChange={e =>  handleFormData(e.target.value,e.target.name,index1,index)}
-                    className="p-2 rounded-md px-4"
-                />
-                {instanceErr.index==index1 && instanceErr.idx==index && <p className="text-xs text-red-600 items-end">**instance name already exists</p>}
-                {requiredInstance.index==index1 && requiredInstance.idx==index && <p className="text-xs text-red-600 items-end">**required</p>}
-                </>
-                ))}
-               
-            </div>
-            <div className="flex justify-center items-center gap-2 mt-14">
-            <button onClick={()=>decreaseInstance(index1)}>-</button>
-            <p className="p-2 bg-white">{channel.instances.length} </p>
-            <button onClick={()=>increaseInstance(index1)}>+</button>
-            {index1>0 &&(
-             <RiDeleteBin2Fill className="text-2xl cursor-pointer" onClick={()=>deleteChannel(index1)}/>
-          )}
-            </div>
-          
-                </div>
-            ))}
-             <button className="flex justify-center items-center gap-2 bg-blue-600 rounded-lg p-2 px-12"
-             onClick={addChannel}
-             >Add Channel <CiCirclePlus/></button>
-            <button className="bg-green-600 p-2 px-10 rounded-lg" onClick={()=>handleNext()}>Next</button>
-         </div>
+                {step==1 && (
+                     <ConfigureNpxLite
+                     formData={formData} 
+                     handleFormData={handleFormData} nameErr={nameErr} numErr={numErr} channelErr={channelErr}
+                     requiredChannel={requiredChannel} requiredInstance={requiredInstance} instanceErr={instanceErr}
+                    decreaseInstance={decreaseInstance} increaseInstance={increaseInstance} addChannel={addChannel}
+                    deleteChannel={deleteChannel} handleNext={handleNext}
+                     />
+                 )}
+                {step==2 && (
+                    <CustomizeNpxLite formData={formData} setFormData={setFormData}/>
+                )}
     </div>
 </div>
           {goBack &&( 
