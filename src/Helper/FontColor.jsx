@@ -1,4 +1,4 @@
-export default function FontColor({name,text,formData}){
+export default function FontColor({name,text,formData,handleChange}){
     const value = formData && formData[name] ? formData[name] : "#000000";
    
     return(

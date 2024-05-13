@@ -4,9 +4,35 @@ import { Fragment } from "react";
 
 export default function ConfigureNpxLite(props){
     return(
-        
-        <div className="flex flex-col justify-center items-center gap-5">
-        <div className="flex flex-col justify-start items-center gap-3 mt-10 w-full">
+        <>
+         <style scoped>
+                {
+                    `
+                    .channel-changes{
+                        display: grid;
+                       
+                    }
+                    .flex-changes{
+                        justify-content: flex-start;
+                        align-items: flex-start;
+                        margin-left:40px;
+                    }
+
+                    @media(min-width:768px){
+                    .channel-changes{
+                        display: flex
+                    }
+                    .flex-changes{
+                    justify-content: flex-center;
+                    align-items: center;
+                    }
+                }
+                    `
+                }
+            </style>
+
+        <div className="flex flex-col   gap-5  flex-changes">
+        <div className="flex flex-col flex-changes gap-3 mt-10 w-full ">
             <label className="p-2 font-medium" htmlFor="scaleName">Scale Name:</label>
             <input 
                 type="text" 
@@ -19,7 +45,7 @@ export default function ConfigureNpxLite(props){
              {props.nameErr && <p className="text-xs text-red-600 items-end">**min 3 characters</p>}
         </div>
 
-        <div className="flex flex-col justify-center items-center gap-5">
+        <div className="flex flex-col flex-changes gap-5">
             <label className="p-2 font-medium" htmlFor="numResponses">No. of Responses per Instance:</label>
             <input type="number" value={props.formData["numResponses"]} name="numResponses" placeholder="Enter number" 
              className="p-2 rounded-md px-4"
@@ -27,21 +53,24 @@ export default function ConfigureNpxLite(props){
              {props.numErr && <p className="text-xs text-red-600 items-end">**(min:25- max:10000)</p>}
         </div>
         {props.formData.channels.map((channel,index1)=>(
-            <div key={index1} className="flex justify-center items-center gap-5">
-             <div className="flex flex-col justify-start items-center gap-5">
-                <div className="flex flex-col justify-center items-center gap-3">
+            <>
+           
+            <div key={index1} className="flex flex-changes gap-5 channel-changes">
+             <div className="flex flex-col  gap-5">
+                <div className="flex flex-col  gap-3">
             <label className="p-2 font-medium" htmlFor="channelName">Specify Channel:</label>
             <input type="text" value={channel.channelName}  name="channelName" placeholder="Enter channel name" 
-             className="p-2 rounded-md px-4"
+             className="p-2 rounded-md px-4 w-max"
             onChange={e => props.handleFormData(e.target.value,e.target.name,index1)} />
            {props.channelErr==index1 && <p className="text-xs text-red-600 items-end">**channel name already exists</p>}
            {props.requiredChannel==index1 && <p className="text-xs text-red-600 items-end">**required</p>}
            </div>
         </div>
-        <div className="flex flex-col justify-center items-center gap-3">
+        <div className="flex gap-3">
+        <div className="flex flex-col  gap-3">
             <label className="p-2 font-medium" htmlFor="InstanceName">Specify Instances:</label>
             {channel.instances.map((instance, index) => (
-                <div  key={index} className="flex flex-col justify-center items-center gap-3">
+                <div  key={index} className="flex flex-col  gap-3">
             <input
                 key={index}
                 type="text"
@@ -65,13 +94,16 @@ export default function ConfigureNpxLite(props){
          <RiDeleteBin2Fill className="text-2xl cursor-pointer" onClick={()=>props.deleteChannel(index1)}/>
       )}
         </div>
+        </div>
       
             </div>
+            </>
         ))}
-         <button className="flex justify-center items-center gap-2 bg-blue-600 rounded-lg p-2 px-12"
+         <button className="flex flex-changes gap-2 bg-blue-600 rounded-lg p-2 px-12"
          onClick={props.addChannel}
          >Add Channel <CiCirclePlus/></button>
-        <button className="bg-green-600 p-2 px-10 rounded-lg" onClick={()=>props.handleNext()}>Next</button>
+        <button className="bg-green-600 p-2 px-10 rounded-lg  flex-changes" onClick={()=>props.handleNext()}>Next</button>
      </div>
+     </>
     )
 }
